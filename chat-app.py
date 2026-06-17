@@ -1,11 +1,15 @@
 from langchain_classic.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, MessagesPlaceholder
 from langchain_ollama import ChatOllama
-from langchain_classic.memory import ConversationBufferMemory
+from langchain_classic.memory import ConversationSummaryMemory
 from langchain_classic.chains import LLMChain
 
 llm = ChatOllama(model="llama3.2:1b")
 
-memory = ConversationBufferMemory(memory_key="messages", return_messages=True)
+memory = ConversationSummaryMemory(
+    memory_key="messages",
+    return_messages=True,
+    llm=llm,
+)
 
 prompt = ChatPromptTemplate(
     input_variables=["content", "messages"],
@@ -18,7 +22,12 @@ prompt = ChatPromptTemplate(
     ]
 )
 
-chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
+chain = LLMChain(
+    llm=llm,
+    prompt=prompt,
+    memory=memory,
+    verbose=True,
+)
 
 while True:
     content = input(">> ")
